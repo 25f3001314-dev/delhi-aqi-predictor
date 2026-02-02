@@ -11,23 +11,40 @@ AQI_API_KEY = os.getenv("AQI_API_KEY", "4e84e711ecd384cb72016b0238185ae0a443dbe3
 AQI_API_URL = "https://api.waqi.info/feed/delhi/"
 
 def get_real_time_aqi(city="delhi"):
-    """Fetch real-time AQI from WAQI API"""
+    """Fetch real-time AQI from WAQI API with all available data"""
     try:
         response = requests.get(f"https://api.waqi.info/feed/{city}/?token={AQI_API_KEY}", timeout=5)
         data = response.json()
         
         if data.get("status") == "ok":
             aqi_data = data["data"]
-            return {
+            iaqi = aqi_data.get("iaqi", {})
+            
+            # Extract all available parameters
+            result = {
                 "aqi": aqi_data.get("aqi", 0),
                 "city": aqi_data.get("city", {}).get("name", city),
                 "time": aqi_data.get("time", {}).get("s", ""),
-                "pm25": aqi_data.get("iaqi", {}).get("pm25", {}).get("v", 0),
-                "pm10": aqi_data.get("iaqi", {}).get("pm10", {}).get("v", 0),
-                "temp": aqi_data.get("iaqi", {}).get("t", {}).get("v", 0),
-                "humidity": aqi_data.get("iaqi", {}).get("h", {}).get("v", 0),
+                "pm25": iaqi.get("pm25", {}).get("v", 0),
+                "pm10": iaqi.get("pm10", {}).get("v", 0),
+                "temp": iaqi.get("t", {}).get("v", 0),
+                "humidity": iaqi.get("h", {}).get("v", 0),
+                "pressure": iaqi.get("p", {}).get("v", 0),
+                "wind": iaqi.get("w", {}).get("v", 0),
+                "dew": iaqi.get("dew", {}).get("v", 0),
+                "o3": iaqi.get("o3", {}).get("v", 0),
+                "no2": iaqi.get("no2", {}).get("v", 0),
+                "so2": iaqi.get("so2", {}).get("v", 0),
+                "co": iaqi.get("co", {}).get("v", 0),
+                "uv": aqi_data.get("forecast", {}).get("daily", {}).get("uvi", [{}])[0].get("avg", 0) if aqi_data.get("forecast") else 0,
                 "source": "real-time"
             }
+            
+            # Get attribution and station info
+            if "attributions" in aqi_data:
+                result["station"] = aqi_data.get("attributions", [{}])[0].get("name", "")
+            
+            return result
     except Exception as e:
         print(f"API Error: {e}")
     

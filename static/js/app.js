@@ -34,12 +34,18 @@ async function fetchCurrentAQI() {
             document.getElementById('categoryValue').textContent = category;
             document.getElementById('pm25Value').textContent = data.pm25 || '--';
             document.getElementById('pm10Value').textContent = data.pm10 || '--';
-            document.getElementById('temperature').textContent = data.temp || '--';
-            document.getElementById('humidity').textContent = (data.humidity || '--') + ' %';
+            document.getElementById('temperature').textContent = (data.temp || '--') + (data.temp ? '°C' : '');
+            document.getElementById('humidity').textContent = (data.humidity || '--') + (data.humidity ? ' %' : '');
             
-            // Fix wind speed - use actual data from API when available
-            const windSpeed = data.wind || data.w || '--';
-            document.getElementById('windSpeed').textContent = windSpeed + (windSpeed !== '--' ? ' km/h' : ' km/h');
+            // Wind speed - now using actual data from API
+            const windSpeed = data.wind || '--';
+            document.getElementById('windSpeed').textContent = windSpeed + (windSpeed !== '--' ? ' km/h' : '');
+            
+            // Update UV Index if available
+            const uvElements = document.querySelectorAll('.detail-value');
+            if (uvElements.length > 2 && data.uv) {
+                uvElements[2].textContent = Math.round(data.uv);
+            }
             
             document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
             
