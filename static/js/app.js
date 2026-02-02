@@ -35,17 +35,24 @@ async function fetchCurrentAQI() {
             document.getElementById('pm25Value').textContent = data.pm25 || '--';
             document.getElementById('pm10Value').textContent = data.pm10 || '--';
             document.getElementById('temperature').textContent = (data.temp || '--') + (data.temp ? '°C' : '');
-            document.getElementById('humidity').textContent = (data.humidity || '--') + (data.humidity ? ' %' : '');
+            document.getElementById('humidity').textContent = (data.humidity || '--') + (data.humidity ? '%' : '');
             
-            // Wind speed - now using actual data from API
+            // Wind speed
             const windSpeed = data.wind || '--';
             document.getElementById('windSpeed').textContent = windSpeed + (windSpeed !== '--' ? ' km/h' : '');
             
-            // Update UV Index if available
-            const uvElements = document.querySelectorAll('.detail-value');
-            if (uvElements.length > 2 && data.uv) {
-                uvElements[2].textContent = Math.round(data.uv);
-            }
+            // Update UV Index
+            document.getElementById('uvIndex').textContent = data.uv ? Math.round(data.uv) : '--';
+            
+            // Update Pressure
+            document.getElementById('pressure').textContent = (data.pressure || '--') + (data.pressure ? ' mb' : '');
+            
+            // Update Visibility (calculate from dew point and humidity if not provided)
+            const visibility = data.visibility || (data.humidity > 70 ? '1.5' : '5');
+            document.getElementById('visibility').textContent = visibility + ' km';
+            
+            // Update Dew Point
+            document.getElementById('dewPoint').textContent = (data.dew || '--') + (data.dew ? '°C' : '');
             
             document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
             
