@@ -102,6 +102,33 @@ def real_time_api():
         return jsonify(data)
     return jsonify({"error": "Unable to fetch real-time data"}), 500
 
+@app.route('/api/historical')
+def historical_api():
+    """Simulated historical data for chart (last 24 hours)"""
+    import random
+    from datetime import datetime, timedelta
+    
+    historical_data = []
+    base_time = datetime.now()
+    
+    # Get current real AQI as baseline
+    real_data = get_real_time_aqi()
+    base_aqi = real_data["aqi"] if real_data else 180
+    
+    # Generate 24 hours of data (hourly)
+    for i in range(24):
+        time = base_time - timedelta(hours=23-i)
+        # Vary AQI realistically around base value
+        variation = random.randint(-30, 30)
+        aqi = max(50, min(350, base_aqi + variation))
+        
+        historical_data.append({
+            "timestamp": time.strftime("%H:%M"),
+            "aqi": aqi
+        })
+    
+    return jsonify(historical_data)
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=False)

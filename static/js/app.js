@@ -36,7 +36,11 @@ async function fetchCurrentAQI() {
             document.getElementById('pm10Value').textContent = data.pm10 || '--';
             document.getElementById('temperature').textContent = data.temp || '--';
             document.getElementById('humidity').textContent = (data.humidity || '--') + ' %';
-            document.getElementById('windSpeed').textContent = '--' + ' km/h';
+            
+            // Fix wind speed - use actual data from API when available
+            const windSpeed = data.wind || data.w || '--';
+            document.getElementById('windSpeed').textContent = windSpeed + (windSpeed !== '--' ? ' km/h' : ' km/h');
+            
             document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
             
             // Update colors based on AQI
