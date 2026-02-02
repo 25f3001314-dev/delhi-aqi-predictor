@@ -36,7 +36,6 @@ def get_real_time_aqi(city="delhi"):
                 "no2": iaqi.get("no2", {}).get("v", 0),
                 "so2": iaqi.get("so2", {}).get("v", 0),
                 "co": iaqi.get("co", {}).get("v", 0),
-                "uv": aqi_data.get("forecast", {}).get("daily", {}).get("uvi", [{}])[0].get("avg", 0) if aqi_data.get("forecast") else 0,
                 "source": "real-time"
             }
             

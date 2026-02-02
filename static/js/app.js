@@ -41,9 +41,6 @@ async function fetchCurrentAQI() {
             const windSpeed = data.wind || '--';
             document.getElementById('windSpeed').textContent = windSpeed + (windSpeed !== '--' ? ' km/h' : '');
             
-            // Update UV Index
-            document.getElementById('uvIndex').textContent = data.uv ? Math.round(data.uv) : '--';
-            
             // Update Pressure
             document.getElementById('pressure').textContent = (data.pressure || '--') + (data.pressure ? ' mb' : '');
             
