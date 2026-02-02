@@ -402,31 +402,189 @@ h1 {
     height: 300px !important;
 }
 
+/* Mobile Responsive Styles */
 @media (max-width: 768px) {
-    .aqi-main {
-        grid-template-columns: 1fr;
-        text-align: center;
+    body {
+        padding: 10px;
     }
     
-    .aqi-number {
-        font-size: 80px;
-    }
-    
-    .category-value {
-        font-size: 32px;
-    }
-    
-    .pollutant-info,
-    .weather-details {
-        flex-direction: column;
-        gap: 15px;
+    .container {
+        padding: 20px 15px;
+        max-width: 100%;
     }
     
     h1 {
-        font-size: 28px;
+        font-size: 24px;
+        margin-bottom: 15px;
     }
     
     .subtitle {
+        font-size: 14px;
+    }
+    
+    .last-updated {
+        font-size: 12px;
+    }
+    
+    .aqi-card {
+        padding: 25px 20px;
+        margin-bottom: 20px;
+    }
+    
+    .aqi-main {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .aqi-number {
+        font-size: 72px;
+    }
+    
+    .category-value {
+        font-size: 28px;
+    }
+    
+    .weather-section {
+        padding: 15px;
+    }
+    
+    .weather-icon {
+        font-size: 48px;
+    }
+    
+    .temperature {
+        font-size: 28px;
+    }
+    
+    .refresh-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+        margin: 0 auto;
+    }
+    
+    .pollutant-info {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px 15px;
+    }
+    
+    .pollutant-value {
+        font-size: 18px;
+    }
+    
+    .aqi-scale {
+        padding: 20px 15px;
+    }
+    
+    .weather-details {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 20px 15px;
+    }
+    
+    .detail-item {
+        padding: 8px;
+        gap: 8px;
+    }
+    
+    .detail-icon {
+        font-size: 22px;
+    }
+    
+    .detail-value {
         font-size: 16px;
+    }
+    
+    .mascot {
+        display: none;
+    }
+    
+    .chart-section {
+        padding: 25px 20px;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .location-btn {
+        width: 100%;
+        padding: 14px 20px;
+    }
+    
+    .min-max {
+        flex-direction: row;
+        gap: 10px;
+        width: 100%;
+    }
+    
+    .stat-box {
+        flex: 1;
+        padding: 15px 20px;
+    }
+    
+    .stat-value {
+        font-size: 28px;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+    }
+    
+    #aqiChart {
+        height: 250px !important;
+    }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    .container {
+        padding: 15px 10px;
+        border-radius: 15px;
+    }
+    
+    h1 {
+        font-size: 20px;
+    }
+    
+    .aqi-card {
+        padding: 20px 15px;
+    }
+    
+    .aqi-number {
+        font-size: 56px;
+    }
+    
+    .category-value {
+        font-size: 24px;
+    }
+    
+    .weather-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .pollutant-info {
+        padding: 15px 10px;
+    }
+    
+    .chart-section {
+        padding: 20px 15px;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+    }
+    
+    #aqiChart {
+        height: 200px !important;
     }
 }

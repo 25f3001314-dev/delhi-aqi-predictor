@@ -169,6 +169,116 @@
             border: 2px solid #667eea;
             z-index: 1;
         }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .hamburger-menu {
+                width: 45px;
+                height: 45px;
+                top: 15px;
+                left: 15px;
+            }
+            
+            .hamburger-menu span {
+                width: 22px;
+            }
+            
+            .side-menu {
+                width: 250px;
+                left: -250px;
+                padding: 70px 0 20px 0;
+            }
+            
+            .menu-item {
+                padding: 18px 25px;
+                font-size: 15px;
+            }
+            
+            #status, #aqi {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .nav-links {
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+            
+            .nav-links a {
+                margin: 0 5px;
+                display: inline-block;
+                margin-bottom: 5px;
+            }
+            
+            #map {
+                height: 250px;
+            }
+            
+            .sound-indicator {
+                bottom: 15px;
+                right: 15px;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                padding: 15px 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .hamburger-menu {
+                width: 40px;
+                height: 40px;
+                top: 10px;
+                left: 10px;
+            }
+            
+            .side-menu {
+                width: 220px;
+                left: -220px;
+            }
+            
+            .nav-links a {
+                font-size: 13px;
+            }
+            
+            button {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            #map {
+                height: 200px;
+            }
+        }
     </style>
 </head>
 <body>

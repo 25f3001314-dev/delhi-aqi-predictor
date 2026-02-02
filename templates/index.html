@@ -83,6 +83,50 @@
             border-left-color: #667eea;
             color: #667eea;
         }
+        
+        /* Additional Mobile Styles */
+        @media (max-width: 768px) {
+            .hamburger-menu {
+                width: 45px;
+                height: 45px;
+                top: 15px;
+                left: 15px;
+            }
+            
+            .hamburger-menu span {
+                width: 22px;
+            }
+            
+            .side-menu {
+                width: 250px;
+                left: -250px;
+                padding: 70px 0 20px 0;
+            }
+            
+            .menu-item {
+                padding: 18px 25px;
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hamburger-menu {
+                width: 40px;
+                height: 40px;
+                top: 10px;
+                left: 10px;
+            }
+            
+            .side-menu {
+                width: 220px;
+                left: -220px;
+            }
+            
+            .menu-item {
+                padding: 16px 20px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
