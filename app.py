@@ -103,4 +103,5 @@ def real_time_api():
     return jsonify({"error": "Unable to fetch real-time data"}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True, port=7860)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=False)
