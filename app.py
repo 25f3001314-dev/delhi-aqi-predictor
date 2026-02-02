@@ -145,6 +145,9 @@ def historical_api():
     
     return jsonify(historical_data)
 
+# Vercel serverless handler
+app.config['APPLICATION_ROOT'] = '/'
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=False)
