@@ -32,9 +32,9 @@ async function fetchCurrentAQI() {
             }
             
             document.getElementById('categoryValue').textContent = category;
-            document.getElementById('pm25Value').textContent = data.pm25 || '--';
-            document.getElementById('pm10Value').textContent = data.pm10 || '--';
-            document.getElementById('temperature').textContent = (data.temp || '--') + (data.temp ? '°C' : '');
+            document.getElementById('pm25Value').textContent = data.pm25 ? Math.round(data.pm25) : '--';
+            document.getElementById('pm10Value').textContent = data.pm10 ? Math.round(data.pm10) : '--';
+            document.getElementById('temperature').textContent = data.temp ? Math.round(data.temp * 10) / 10 : '--';
             document.getElementById('humidity').textContent = (data.humidity || '--') + (data.humidity ? '%' : '');
             
             // Wind speed
@@ -52,7 +52,7 @@ async function fetchCurrentAQI() {
             document.getElementById('visibility').textContent = visibility + ' km';
             
             // Update Dew Point
-            document.getElementById('dewPoint').textContent = (data.dew || '--') + (data.dew ? '°C' : '');
+            document.getElementById('dewPoint').textContent = data.dew ? Math.round(data.dew) + '°C' : '--';
             
             document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
             

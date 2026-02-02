@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>New Delhi Air Quality Index (AQI) | Air Pollution</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -173,7 +173,7 @@
                     <div class="weather-section">
                         <div class="weather-icon">☁️</div>
                         <div class="temperature">
-                            <span id="temperature">--</span>°C
+                            <span id="temperature">--</span><span id="tempUnit">°C</span>
                         </div>
                         <div class="weather-condition" id="weatherCondition">Mist</div>
                     </div>

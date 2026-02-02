@@ -9,10 +9,12 @@ body {
     background: linear-gradient(135deg, #fdfcfb 0%, #f5f0e8 50%, #fff9f0 100%);
     min-height: 100vh;
     padding: 20px;
+    overflow-x: hidden;
 }
 
 .container {
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
 }
 
