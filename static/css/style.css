@@ -258,8 +258,9 @@ h1 {
 }
 
 .weather-details {
-    display: flex;
-    gap: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     padding: 25px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 16px;
@@ -270,7 +271,10 @@ h1 {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex: 1;
+    padding: 10px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .detail-icon {
