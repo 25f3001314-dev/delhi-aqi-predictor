@@ -365,7 +365,118 @@
                         });
                     },
                     error => {
-                        document.getElementById('status').innerHTML = '❌ Could not get your location. Please enable location services.';
+                        console.error('Geolocation error:', error);
+                        // Use Delhi center as fallback
+                        userLat = 28.6139;
+                        userLng = 77.2090;
+                        document.getElementById('status').innerHTML = '⚠️ Location access denied. Using Delhi center location...';
+                        
+                        // Center map on Delhi
+                        map.setView([userLat, userLng], 13);
+                        
+                        // Add marker for Delhi center
+                        const userMarker = L.marker([userLat, userLng], {
+                            icon: L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34],
+                                shadowSize: [41, 41]
+                            })
+                        }).addTo(map);
+                        userMarker.bindPopup('<b>Delhi Center (Default)</b>').openPopup();
+                        markers.push(userMarker);
+                        
+                        // Continue searching for hospitals at Delhi center
+                        const radius = 5000;
+                        const overpassQuery = `
+                            [out:json];
+                            (
+                                node["amenity"="hospital"](around:${radius},${userLat},${userLng});
+                                way["amenity"="hospital"](around:${radius},${userLat},${userLng});
+                                node["amenity"="clinic"](around:${radius},${userLat},${userLng});
+                            );
+                            out center;
+                        `;
+                        
+                        fetch('https://overpass-api.de/api/interpreter', {
+                            method: 'POST',
+                            body: overpassQuery
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const hospitals = data.elements;
+                            
+                            if (hospitals.length > 0) {
+                                document.getElementById('status').innerHTML = `✅ Found ${hospitals.length} hospitals nearby`;
+                                
+                                hospitals.forEach(h => {
+                                    const lat = h.lat || h.center?.lat;
+                                    const lon = h.lon || h.center?.lon;
+                                    h.distance = calculateDistance(userLat, userLng, lat, lon);
+                                });
+                                hospitals.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+                                
+                                // Show nearest hospital distance
+                                const nearestHospital = hospitals[0];
+                                const nearestName = nearestHospital.tags?.name || 'Nearest Hospital';
+                                document.getElementById('nearestDistance').style.display = 'block';
+                                document.getElementById('distanceValue').innerHTML = `${nearestHospital.distance} km away - ${nearestName}`;
+                                
+                                let html = '';
+                                hospitals.slice(0, 15).forEach((place, index) => {
+                                    const lat = place.lat || place.center?.lat;
+                                    const lon = place.lon || place.center?.lon;
+                                    const name = place.tags?.name || `Hospital ${index + 1}`;
+                                    const address = place.tags?.['addr:street'] || place.tags?.['addr:city'] || 'Address not available';
+                                    
+                                    const marker = L.marker([lat, lon], {
+                                        icon: L.icon({
+                                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                                            iconSize: [25, 41],
+                                            iconAnchor: [12, 41],
+                                            popupAnchor: [1, -34],
+                                            shadowSize: [41, 41]
+                                        })
+                                    }).addTo(map);
+                                    
+                                    marker.bindPopup(`<b>${name}</b><br>${address}<br>Distance: ${place.distance} km`);
+                                    markers.push(marker);
+
+                                    const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+                                    const shareLink = `https://maps.google.com/?q=${lat},${lon}`;
+                                    
+                                    const phone = place.tags?.phone || place.tags?.['contact:phone'] || '';
+                                    const operator = place.tags?.operator || '';
+                                    const beds = place.tags?.beds || '';
+                                    const emergency = place.tags?.emergency || '';
+                                    
+                                    html += `
+                                        <div class="hospital-item">
+                                            <div class="hospital-name">${index + 1}. ${name}</div>
+                                            <div class="hospital-address">📍 ${address}</div>
+                                            <div class="hospital-distance">📏 Distance: ${place.distance} km</div>
+                                            ${phone ? `<div style="color: #666; margin-top: 5px;">📞 ${phone}</div>` : ''}
+                                            ${operator ? `<div style="color: #666; margin-top: 5px;">🏥 ${operator}</div>` : ''}
+                                            ${beds ? `<div style="color: #666; margin-top: 5px;">🛏️ Beds: ${beds}</div>` : ''}
+                                            ${emergency === 'yes' ? `<div style="color: #f44336; font-weight: bold; margin-top: 5px;">🚨 Emergency Available</div>` : ''}
+                                            <a href="${googleMapsLink}" target="_blank" class="share-btn">🗺️ Open in Maps</a>
+                                            <a href="whatsapp://send?text=Hospital: ${encodeURIComponent(name)}%0ALocation: ${shareLink}" class="share-btn" style="background: #25d366;">📤 Share</a>
+                                        </div>
+                                    `;
+                                });
+                                
+                                document.getElementById('hospitals').innerHTML = html;
+                            } else {
+                                document.getElementById('status').innerHTML = '❌ No hospitals found nearby';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            document.getElementById('status').innerHTML = '❌ Error searching for hospitals';
+                        });
                     },
                     {
                         enableHighAccuracy: true,
