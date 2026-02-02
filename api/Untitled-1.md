@@ -1,0 +1,1 @@
+https://25f3001314-dev.github.io/delhi-aqi-predictor/
