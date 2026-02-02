@@ -47,10 +47,6 @@ async function fetchCurrentAQI() {
             // Update Pressure
             document.getElementById('pressure').textContent = (data.pressure || '--') + (data.pressure ? ' mb' : '');
             
-            // Update Visibility (calculate from dew point and humidity if not provided)
-            const visibility = data.visibility || (data.humidity > 70 ? '1.5' : '5');
-            document.getElementById('visibility').textContent = visibility + ' km';
-            
             // Update Dew Point
             document.getElementById('dewPoint').textContent = data.dew ? Math.round(data.dew) + '°C' : '--';
             
