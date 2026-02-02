@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Pollution Alert - Delhi AQI</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             margin: 0;
@@ -160,6 +162,13 @@
         .sound-indicator.active {
             display: block;
         }
+        #map {
+            height: 300px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -195,6 +204,7 @@
         
         <h1>📍 Live Location Pollution Check</h1>
         <p id="status">🔄 Getting your location...</p>
+        <div id="map"></div>
         <p id="aqi"></p>
         <div id="warning"></div>
         <button onclick="checkAQI()">🔍 Check Pollution Now</button>
@@ -203,16 +213,40 @@
     <script>
         let userLat = 28.6139; // Delhi latitude (fixed)
         let userLng = 77.2090; // Delhi longitude (fixed)
+        let map;
+        let userMarker;
+
+        // Initialize map on page load
+        window.addEventListener('load', function() {
+            // Create map centered on Delhi
+            map = L.map('map').setView([28.6139, 77.2090], 12);
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Add default marker
+            userMarker = L.marker([28.6139, 77.2090], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            }).addTo(map);
+            userMarker.bindPopup('<b>📍 Your Location</b>').openPopup();
+            
+            requestLocationAndCheckAQI();
+        });
 
         // Request notification permission on page load
         if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission();
         }
-
-        // Auto-request location and check AQI immediately
-        window.addEventListener('load', function() {
-            requestLocationAndCheckAQI();
-        });
 
         function requestLocationAndCheckAQI() {
             // Set Delhi location by default
@@ -230,6 +264,11 @@
                             userLat = lat;
                             userLng = lng;
                             document.getElementById('status').innerHTML = `✅ Location: Delhi (${userLat.toFixed(4)}, ${userLng.toFixed(4)})`;
+                            
+                            // Update map to user's actual location
+                            map.setView([userLat, userLng], 14);
+                            userMarker.setLatLng([userLat, userLng]);
+                            userMarker.bindPopup('<b>📍 Your Current Location</b><br>Checking AQI here...').openPopup();
                         } else {
                             document.getElementById('status').innerHTML = `📍 Using Delhi center location`;
                         }
