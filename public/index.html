@@ -43,6 +43,30 @@
             font-size: 1.1em;
         }
         
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        
+        .nav-links a:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
         .aqi-display {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
@@ -173,6 +197,11 @@
     <div class="container">
         <h1>🌍 Delhi Air Quality Monitor</h1>
         <p class="subtitle">Real-time AQI Data</p>
+        
+        <div class="nav-links">
+            <a href="live-location.html">📍 Live Location Alert</a>
+            <a href="hospitals.html">🏥 Nearest Hospitals</a>
+        </div>
         
         <div id="loading" class="loading">
             <div class="spinner"></div>
