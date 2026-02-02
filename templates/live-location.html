@@ -306,9 +306,6 @@
                 } else if (aqi <= 100) {
                     category = 'Moderate';
                     advice = 'Air quality is acceptable. Sensitive people should limit outdoor activities.';
-                
-                // Play sound based on AQI level
-                playSound(aqi);
                     aqiClass = 'aqi-moderate';
                 } else if (aqi <= 150) {
                     category = 'Unhealthy for Sensitive Groups';
@@ -330,6 +327,9 @@
                     aqiClass = 'aqi-hazardous';
                     showNotification(aqi, area);
                 }
+                
+                // Play sound based on AQI level
+                playSound(aqi);
                 
                 document.getElementById('aqi').innerHTML = `
                     <strong>📍 ${area}</strong><br>
@@ -392,6 +392,9 @@
                             showNotification(aqi, city);
                         }
                         
+                        // Play sound based on AQI level
+                        playSound(aqi);
+                        
                         document.getElementById('aqi').innerHTML = `
                             <strong>${city}</strong><br>
                             AQI: <strong style="font-size: 32px;">${aqi}</strong><br>
@@ -416,12 +419,7 @@
                 .catch(err => {
                     document.getElementById('aqi').innerHTML = '❌ Error fetching data: ' + err.message;
                 });
-    <script>
-        function toggleMenu() {
-            document.getElementById('sideMenu').classList.toggle('active');
-            document.getElementById('menuOverlay').classList.toggle('active');
-        }
-    </script>
+            });
         }
 
         function showNotification(aqi, city) {
