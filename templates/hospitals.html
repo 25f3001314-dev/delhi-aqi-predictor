@@ -175,15 +175,6 @@
             border-radius: 10px;
             margin: 15px 0;
         }
-        .info-note {
-            background: #d4edda;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 4px solid #28a745;
-            font-size: 14px;
-            color: #155724;
-        }
     </style>
 </head>
 <body>
@@ -200,20 +191,14 @@
     </div>
     <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
     <div class="container">
-        <div class="nav-links">
-            <a href="/">🏠 Home</a>
-            <a href="/live-location">📍 Live Alert</a>
-            <a href="/hospitals">🏥 Hospitals</a>
-        </div>
-        
         <h1>🏥 Nearest Hospitals</h1>
-        <div class="info-note">
-            <strong>✅ 100% Free:</strong> Uses OpenStreetMap - No API key, No payment required!
+        
+        <div id="nearestDistance" style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #ffc107; font-size: 20px; font-weight: bold; text-align: center; display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            🏥 Nearest Hospital: <span id="distanceValue">Calculating...</span>
         </div>
         
-        <p id="status">📍 Click button to find hospitals near you</p>
+        <p id="status">📍 Finding hospitals near you...</p>
         <div id="map"></div>
-        <button onclick="findHospitals()">🔍 Find Nearest Hospitals</button>
         <div id="hospitals"></div>
     </div>
 
@@ -231,6 +216,9 @@
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 19
             }).addTo(map);
+            
+            // Auto-find hospitals on load
+            setTimeout(findHospitals, 1000);
         }
         
         // Initialize map on load
@@ -312,6 +300,12 @@
                                     h.distance = calculateDistance(userLat, userLng, lat, lon);
                                 });
                                 hospitals.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+                                
+                                // Show nearest hospital distance
+                                const nearestHospital = hospitals[0];
+                                const nearestName = nearestHospital.tags?.name || 'Nearest Hospital';
+                                document.getElementById('nearestDistance').style.display = 'block';
+                                document.getElementById('distanceValue').innerHTML = `${nearestHospital.distance} km away - ${nearestName}`;
                                 
                                 let html = '';
                                 hospitals.slice(0, 15).forEach((place, index) => {
