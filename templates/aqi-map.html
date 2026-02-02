@@ -13,22 +13,31 @@
             padding: 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        h1 {
+        .header {
             text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        h1 {
+            font-size: 42px;
             color: #333;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
         .subtitle {
-            text-align: center;
+            font-size: 18px;
             color: #666;
-            margin-bottom: 30px;
+            margin-top: 10px;
         }
         .hamburger-menu {
             position: fixed;
@@ -54,79 +63,171 @@
             margin: 3px 0;
             border-radius: 3px;
         }
-        .area-grid {
+        .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-top: 20px;
+            margin-bottom: 40px;
         }
-        .area-card {
-            background: #f5f5f5;
-            padding: 20px;
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
             border-radius: 15px;
-            border-left: 5px solid #ccc;
-            transition: transform 0.2s;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+            transition: transform 0.3s;
         }
-        .area-card:hover {
+        .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        .area-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .aqi-value {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 15px 0;
-        }
-        .category {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .coords {
-            font-size: 12px;
-            color: #999;
-        }
-        .good { border-left-color: #4caf50; }
-        .good .aqi-value { color: #4caf50; }
-        .moderate { border-left-color: #ffeb3b; }
-        .moderate .aqi-value { color: #f9a825; }
-        .unhealthy { border-left-color: #ff9800; }
-        .unhealthy .aqi-value { color: #ff9800; }
-        .very-unhealthy { border-left-color: #f44336; }
-        .very-unhealthy .aqi-value { color: #f44336; }
-        .hazardous { border-left-color: #9c27b0; }
-        .hazardous .aqi-value { color: #9c27b0; }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 18px;
-            color: #666;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f0f4ff;
-            border-radius: 15px;
-        }
-        .stat-item {
-            text-align: center;
         }
         .stat-value {
-            font-size: 32px;
+            font-size: 48px;
             font-weight: bold;
-            color: #667eea;
+            margin: 10px 0;
         }
         .stat-label {
-            font-size: 14px;
+            font-size: 16px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .area-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .area-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #e0e0e0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .area-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+        .area-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .area-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .aqi-value {
+            font-size: 64px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .category {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 1s ease;
+        }
+        .coords {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .good::before { background: #4caf50; }
+        .good .aqi-value { color: #4caf50; }
+        .good .category { background: #e8f5e9; color: #2e7d32; }
+        .good .progress-fill { background: #4caf50; }
+        
+        .moderate::before { background: #ffeb3b; }
+        .moderate .aqi-value { color: #f9a825; }
+        .moderate .category { background: #fffde7; color: #f57f17; }
+        .moderate .progress-fill { background: #ffeb3b; }
+        
+        .unhealthy::before { background: #ff9800; }
+        .unhealthy .aqi-value { color: #ff9800; }
+        .unhealthy .category { background: #fff3e0; color: #e65100; }
+        .unhealthy .progress-fill { background: #ff9800; }
+        
+        .very-unhealthy::before { background: #f44336; }
+        .very-unhealthy .aqi-value { color: #f44336; }
+        .very-unhealthy .category { background: #ffebee; color: #c62828; }
+        .very-unhealthy .progress-fill { background: #f44336; }
+        
+        .hazardous::before { background: #9c27b0; }
+        .hazardous .aqi-value { color: #9c27b0; }
+        .hazardous .category { background: #f3e5f5; color: #6a1b9a; }
+        .hazardous .progress-fill { background: #9c27b0; }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 24px;
             color: #666;
-            margin-top: 5px;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            h1 { font-size: 28px; }
+            .area-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -138,25 +239,53 @@
     </div>
 
     <div class="container">
-        <h1>🗺️ Delhi AQI Map</h1>
-        <p class="subtitle">🤖 ML-Based Area-wise Air Quality Predictions</p>
+        <div class="header">
+            <h1>🗺️ Delhi Air Quality Map</h1>
+            <p class="subtitle">🤖 Real-time ML-Based Area-wise Predictions</p>
+        </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" id="avgAqi">--</div>
+        <div class="stats-container">
+            <div class="stat-card">
                 <div class="stat-label">Average AQI</div>
+                <div class="stat-value" id="avgAqi">--</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="worstArea">--</div>
-                <div class="stat-label">Worst Area</div>
+            <div class="stat-card">
+                <div class="stat-label">🔴 Worst Area</div>
+                <div class="stat-value" id="worstArea" style="font-size: 24px;">Loading...</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="bestArea">--</div>
-                <div class="stat-label">Best Area</div>
+            <div class="stat-card">
+                <div class="stat-label">🟢 Best Area</div>
+                <div class="stat-value" id="bestArea" style="font-size: 24px;">Loading...</div>
             </div>
         </div>
 
-        <div id="loading" class="loading">🔄 Loading area predictions...</div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4caf50;"></div>
+                <span>Good (0-50)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffeb3b;"></div>
+                <span>Moderate (51-100)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff9800;"></div>
+                <span>Unhealthy (101-200)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f44336;"></div>
+                <span>Very Unhealthy (201-300)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9c27b0;"></div>
+                <span>Hazardous (300+)</span>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            🔄 Loading area predictions...
+        </div>
         <div id="areaGrid" class="area-grid"></div>
     </div>
 
@@ -169,13 +298,16 @@
             return 'hazardous';
         }
 
+        function getProgressWidth(aqi) {
+            return Math.min((aqi / 500) * 100, 100);
+        }
+
         function loadAreaPredictions() {
             fetch('/api/all-areas')
                 .then(r => r.json())
                 .then(areas => {
                     document.getElementById('loading').style.display = 'none';
                     
-                    // Calculate stats
                     const aqiValues = areas.map(a => a.aqi);
                     const avgAqi = Math.round(aqiValues.reduce((a, b) => a + b, 0) / aqiValues.length);
                     
@@ -183,14 +315,16 @@
                     document.getElementById('worstArea').textContent = areas[0].area;
                     document.getElementById('bestArea').textContent = areas[areas.length - 1].area;
                     
-                    // Display areas
                     const grid = document.getElementById('areaGrid');
-                    grid.innerHTML = areas.map(area => `
-                        <div class="area-card ${getCategoryClass(area.aqi)}">
+                    grid.innerHTML = areas.map((area, index) => `
+                        <div class="area-card ${getCategoryClass(area.aqi)}" style="animation: fadeIn 0.5s ${index * 0.1}s both;">
                             <div class="area-name">📍 ${area.area}</div>
                             <div class="aqi-value">${area.aqi}</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${getProgressWidth(area.aqi)}%"></div>
+                            </div>
                             <div class="category">${area.category}</div>
-                            <div class="coords">Distance: ${area.distance_km} km</div>
+                            <div class="coords">📏 ${area.distance_km} km from center</div>
                         </div>
                     `).join('');
                 })
@@ -199,11 +333,14 @@
                 });
         }
 
-        // Load on page load
         loadAreaPredictions();
-        
-        // Refresh every 5 minutes
         setInterval(loadAreaPredictions, 300000);
     </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </body>
 </html>
