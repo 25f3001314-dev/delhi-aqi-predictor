@@ -1,12 +1,18 @@
 {
   "version": 2,
-  "runtime": "python3.10",
-  "functions": {
-    "api/*.py": {
-      "runtime": "python3.10"
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.py"
+    }
+  ],
   "env": {
-    "AQI_API_KEY": "@aqi_api_key"
+    "AQI_API_KEY": "4e84e711ecd384cb72016b0238185ae0a443dbe3"
   }
 }
