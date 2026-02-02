@@ -2,6 +2,9 @@ import gradio as gr
 import requests
 import os
 from datetime import datetime
+from flask import Flask, render_template
+
+app = Flask(__name__)
 
 # Configuration
 AQI_API_KEY = os.getenv("AQI_API_KEY", "demo")
@@ -54,5 +57,17 @@ demo = gr.Interface(
     allow_flagging="never",
 )
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/live-location')
+def live_location():
+    return render_template('live-location.html')
+
+@app.route('/hospitals')
+def hospitals():
+    return render_template('hospitals.html')
+
 if __name__ == "__main__":
-    demo.launch()
+    app.run(debug=True, port=7860)
