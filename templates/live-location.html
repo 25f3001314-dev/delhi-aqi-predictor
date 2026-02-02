@@ -142,10 +142,39 @@
             margin: 15px 0;
             border-left: 4px solid #f44336;
         }
+        .sound-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: none;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .sound-indicator.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <div class="hamburger-menu" onclick="toggleMenu()">
+    <!-- Audio elements for different AQI levels -->
+    <audio id="moderateSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="dangerSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="sound-indicator" id="soundIndicator">
+        🔊 Sound Alert Playing
+    </div>
+    <div class="hamburger-menu" onclick="window.location.href='/'">
         <span></span>
         <span></span>
         <span></span>
@@ -153,6 +182,7 @@
     <div class="side-menu" id="sideMenu">
         <a href="/" class="menu-item">🏠 Dashboard</a>
         <a href="/live-location" class="menu-item" style="background:#f0f4ff;border-left-color:#667eea;">📍 Live Location Alert</a>
+        <a href="/aqi-map" class="menu-item">🗺️ AQI Map</a>
         <a href="/hospitals" class="menu-item">🏥 Nearest Hospitals</a>
     </div>
     <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
@@ -171,47 +201,81 @@
     </div>
 
     <script>
-        let userLat, userLng;
+        let userLat = 28.6139; // Delhi latitude (fixed)
+        let userLng = 77.2090; // Delhi longitude (fixed)
 
         // Request notification permission on page load
         if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission();
         }
 
-        // Get location on page load
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, error, {
-                enableHighAccuracy: false,
-                timeout: 10000,
-                maximumAge: 600000
-            });
-        } else {
-            document.getElementById('status').innerHTML = '❌ GPS not available, trying IP location...';
-            fallbackIPLocation();
+        // Auto-request location and check AQI immediately
+        window.addEventListener('load', function() {
+            requestLocationAndCheckAQI();
+        });
+
+        function requestLocationAndCheckAQI() {
+            // Set Delhi location by default
+            document.getElementById('status').innerHTML = `📍 Getting your location...`;
+            
+            // Try to get actual GPS location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        // Only accept coordinates within Delhi region
+                        if (lat >= 28.4 && lat <= 28.9 && lng >= 76.8 && lng <= 77.5) {
+                            userLat = lat;
+                            userLng = lng;
+                            document.getElementById('status').innerHTML = `✅ Location: Delhi (${userLat.toFixed(4)}, ${userLng.toFixed(4)})`;
+                        } else {
+                            document.getElementById('status').innerHTML = `📍 Using Delhi center location`;
+                        }
+                        
+                        // Auto check AQI after getting location
+                        setTimeout(checkAQI, 1000);
+                    },
+                    error => {
+                        document.getElementById('status').innerHTML = `📍 Location set to: New Delhi, India`;
+                        setTimeout(checkAQI, 1000);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                document.getElementById('status').innerHTML = `📍 Location set to: New Delhi, India`;
+                setTimeout(checkAQI, 1000);
+            }
         }
 
-        function success(position) {
-            userLat = position.coords.latitude;
-            userLng = position.coords.longitude;
-            document.getElementById('status').innerHTML = `✅ Location found: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-        }
-
-        function error() {
-            document.getElementById('status').innerHTML = '⚠️ GPS failed, using IP location...';
-            fallbackIPLocation();
-        }
-
-        function fallbackIPLocation() {
-            fetch('https://ipapi.co/json/')
-                .then(r => r.json())
-                .then(data => {
-                    userLat = data.latitude;
-                    userLng = data.longitude;
-                    document.getElementById('status').innerHTML = `📡 IP Location: ${data.city}, ${data.country_name}`;
-                })
-                .catch(() => {
-                    document.getElementById('status').innerHTML = '❌ Could not get location';
-                });
+        function playSound(aqiLevel) {
+            const soundIndicator = document.getElementById('soundIndicator');
+            
+            if (aqiLevel >= 50 && aqiLevel < 100) {
+                // Moderate: Simple notification sound
+                const sound = document.getElementById('moderateSound');
+                sound.play().catch(e => console.log('Sound play failed:', e));
+                soundIndicator.innerHTML = '🔔 Moderate Pollution Alert';
+                soundIndicator.className = 'sound-indicator active';
+                soundIndicator.style.background = '#ffeb3b';
+                setTimeout(() => soundIndicator.classList.remove('active'), 3000);
+                
+            } else if (aqiLevel >= 200) {
+                // Danger: SOS type sound
+                const sound = document.getElementById('dangerSound');
+                sound.play().catch(e => console.log('Sound play failed:', e));
+                soundIndicator.innerHTML = '🚨 DANGER! High Pollution!';
+                soundIndicator.className = 'sound-indicator active';
+                soundIndicator.style.background = '#f44336';
+                soundIndicator.style.color = 'white';
+                setTimeout(() => soundIndicator.classList.remove('active'), 5000);
+            }
+            // AQI < 50: No sound
         }
 
         function checkAQI() {
@@ -222,8 +286,74 @@
 
             document.getElementById('aqi').innerHTML = '🔄 Fetching AQI data...';
             
-            // NOTE: Replace 'demo' with your free token from aqicn.org/api/register
-            const token = 'demo'; // Get your free token at aqicn.org/api/register
+            // First try ML model prediction
+            fetch('/api/predict-aqi', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({lat: userLat, lng: userLng})
+            })
+            .then(r => r.json())
+            .then(mlData => {
+                const aqi = mlData.aqi;
+                const area = mlData.area;
+                const distance = mlData.distance_km;
+                
+                let category, advice, aqiClass;
+                if (aqi <= 50) {
+                    category = 'Good';
+                    advice = 'Air quality is good. Enjoy outdoor activities!';
+                    aqiClass = 'aqi-good';
+                } else if (aqi <= 100) {
+                    category = 'Moderate';
+                    advice = 'Air quality is acceptable. Sensitive people should limit outdoor activities.';
+                
+                // Play sound based on AQI level
+                playSound(aqi);
+                    aqiClass = 'aqi-moderate';
+                } else if (aqi <= 150) {
+                    category = 'Unhealthy for Sensitive Groups';
+                    advice = 'Sensitive groups should reduce outdoor activities.';
+                    aqiClass = 'aqi-unhealthy';
+                } else if (aqi <= 200) {
+                    category = 'Unhealthy';
+                    advice = '⚠️ Everyone should reduce outdoor activities. Wear a mask!';
+                    aqiClass = 'aqi-very-unhealthy';
+                    showNotification(aqi, area);
+                } else if (aqi <= 300) {
+                    category = 'Very Unhealthy';
+                    advice = '🚨 Avoid outdoor activities. Stay indoors and wear a mask if you must go out!';
+                    aqiClass = 'aqi-very-unhealthy';
+                    showNotification(aqi, area);
+                } else {
+                    category = 'Hazardous';
+                    advice = '☠️ EMERGENCY! Stay indoors. Close all windows. Use air purifier!';
+                    aqiClass = 'aqi-hazardous';
+                    showNotification(aqi, area);
+                }
+                
+                document.getElementById('aqi').innerHTML = `
+                    <strong>📍 ${area}</strong><br>
+                    <small style="opacity:0.8;">${distance}km from your location</small><br>
+                    <strong style="font-size:12px; opacity:0.7;">🤖 ML Predicted AQI</strong><br>
+                    AQI: <strong style="font-size: 32px;">${aqi}</strong><br>
+                    Category: ${category}
+                `;
+                document.getElementById('aqi').className = aqiClass;
+                
+                if (aqi > 150) {
+                    document.getElementById('warning').innerHTML = `
+                        <div class="warning">
+                            <strong>⚠️ Health Advisory:</strong><br>
+                            ${advice}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('warning').innerHTML = `<p style="color: #4caf50; padding: 10px;">${advice}</p>`;
+                }
+            })
+            .catch(err => {
+                // Fallback to WAQI API if ML model fails
+                const token = '4e84e711ecd384cb72016b0238185ae0a443dbe3';
             
             fetch(`https://api.waqi.info/feed/geo:${userLat};${userLng}/?token=${token}`)
                 .then(r => r.json())

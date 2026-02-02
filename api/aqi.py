@@ -35,7 +35,7 @@ def handler(request):
     
     try:
         # Get API key from environment
-        api_key = os.getenv("AQI_API_KEY", "demo")
+        api_key = os.getenv("AQI_API_KEY", "4e84e711ecd384cb72016b0238185ae0a443dbe3")
         api_url = "https://api.waqi.info/feed/delhi/"
         
         # Fetch AQI data

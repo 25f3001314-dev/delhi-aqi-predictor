@@ -2,24 +2,53 @@ let aqiChart;
 
 async function fetchCurrentAQI() {
     try {
-        const response = await fetch('/api/current');
+        // Try real-time API first
+        const response = await fetch('/api/real-time');
         const data = await response.json();
         
-        document.getElementById('aqiNumber').textContent = data.aqi;
-        document.getElementById('categoryValue').textContent = data.category;
-        document.getElementById('pm25Value').textContent = data.pm25;
-        document.getElementById('pm10Value').textContent = data.pm10;
-        document.getElementById('temperature').textContent = data.temperature;
-        document.getElementById('humidity').textContent = data.humidity + ' %';
-        document.getElementById('windSpeed').textContent = data.wind_speed + ' km/h';
-        document.getElementById('lastUpdated').textContent = data.timestamp;
-        
-        // Update colors based on AQI
-        document.getElementById('aqiNumber').style.color = data.color;
-        document.getElementById('categoryValue').style.color = data.color;
+        if (data.aqi) {
+            document.getElementById('aqiNumber').textContent = data.aqi;
+            
+            // Determine category
+            let category, color;
+            if (data.aqi <= 50) {
+                category = 'Good';
+                color = '#00e400';
+            } else if (data.aqi <= 100) {
+                category = 'Moderate';
+                color = '#ffff00';
+            } else if (data.aqi <= 150) {
+                category = 'Unhealthy for Sensitive Groups';
+                color = '#ff7e00';
+            } else if (data.aqi <= 200) {
+                category = 'Unhealthy';
+                color = '#ff0000';
+            } else if (data.aqi <= 300) {
+                category = 'Very Unhealthy';
+                color = '#8f3f97';
+            } else {
+                category = 'Hazardous';
+                color = '#7e0023';
+            }
+            
+            document.getElementById('categoryValue').textContent = category;
+            document.getElementById('pm25Value').textContent = data.pm25 || '--';
+            document.getElementById('pm10Value').textContent = data.pm10 || '--';
+            document.getElementById('temperature').textContent = data.temp || '--';
+            document.getElementById('humidity').textContent = (data.humidity || '--') + ' %';
+            document.getElementById('windSpeed').textContent = '--' + ' km/h';
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+            
+            // Update colors based on AQI
+            document.getElementById('aqiNumber').style.color = color;
+            document.getElementById('categoryValue').style.color = color;
+        }
         
     } catch (error) {
         console.error('Error fetching current AQI:', error);
+        // Fallback to default values
+        document.getElementById('aqiNumber').textContent = '180';
+        document.getElementById('categoryValue').textContent = 'Unhealthy';
     }
 }
 

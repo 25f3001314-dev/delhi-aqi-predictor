@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhi AQI Map - Area-wise Predictions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            cursor: pointer;
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .hamburger-menu span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #667eea;
+            margin: 3px 0;
+            border-radius: 3px;
+        }
+        .area-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .area-card {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #ccc;
+            transition: transform 0.2s;
+        }
+        .area-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .area-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .aqi-value {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .category {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .coords {
+            font-size: 12px;
+            color: #999;
+        }
+        .good { border-left-color: #4caf50; }
+        .good .aqi-value { color: #4caf50; }
+        .moderate { border-left-color: #ffeb3b; }
+        .moderate .aqi-value { color: #f9a825; }
+        .unhealthy { border-left-color: #ff9800; }
+        .unhealthy .aqi-value { color: #ff9800; }
+        .very-unhealthy { border-left-color: #f44336; }
+        .very-unhealthy .aqi-value { color: #f44336; }
+        .hazardous { border-left-color: #9c27b0; }
+        .hazardous .aqi-value { color: #9c27b0; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f0f4ff;
+            border-radius: 15px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hamburger-menu" onclick="window.location.href='/'">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="container">
+        <h1>🗺️ Delhi AQI Map</h1>
+        <p class="subtitle">🤖 ML-Based Area-wise Air Quality Predictions</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="avgAqi">--</div>
+                <div class="stat-label">Average AQI</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="worstArea">--</div>
+                <div class="stat-label">Worst Area</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bestArea">--</div>
+                <div class="stat-label">Best Area</div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">🔄 Loading area predictions...</div>
+        <div id="areaGrid" class="area-grid"></div>
+    </div>
+
+    <script>
+        function getCategoryClass(aqi) {
+            if (aqi <= 50) return 'good';
+            if (aqi <= 100) return 'moderate';
+            if (aqi <= 200) return 'unhealthy';
+            if (aqi <= 300) return 'very-unhealthy';
+            return 'hazardous';
+        }
+
+        function loadAreaPredictions() {
+            fetch('/api/all-areas')
+                .then(r => r.json())
+                .then(areas => {
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    // Calculate stats
+                    const aqiValues = areas.map(a => a.aqi);
+                    const avgAqi = Math.round(aqiValues.reduce((a, b) => a + b, 0) / aqiValues.length);
+                    
+                    document.getElementById('avgAqi').textContent = avgAqi;
+                    document.getElementById('worstArea').textContent = areas[0].area;
+                    document.getElementById('bestArea').textContent = areas[areas.length - 1].area;
+                    
+                    // Display areas
+                    const grid = document.getElementById('areaGrid');
+                    grid.innerHTML = areas.map(area => `
+                        <div class="area-card ${getCategoryClass(area.aqi)}">
+                            <div class="area-name">📍 ${area.area}</div>
+                            <div class="aqi-value">${area.aqi}</div>
+                            <div class="category">${area.category}</div>
+                            <div class="coords">Distance: ${area.distance_km} km</div>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => {
+                    document.getElementById('loading').innerHTML = '❌ Error loading predictions';
+                });
+        }
+
+        // Load on page load
+        loadAreaPredictions();
+        
+        // Refresh every 5 minutes
+        setInterval(loadAreaPredictions, 300000);
+    </script>
+</body>
+</html>
